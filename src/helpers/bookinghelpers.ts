@@ -7,4 +7,10 @@ function isTimeSlotAvailable(bookings: Booking[], timeSlot: TimeSlot): boolean {
 	});
 }
 
-export {isTimeSlotAvailable};
+function isTimeSlotSelected(selectedTimeslots: TimeSlot[], timeSlot: TimeSlot): boolean {
+	return selectedTimeslots.some(ts => {
+		return isSameDay(ts.start, timeSlot.start) && ts.start.getHours() === timeSlot.start.getHours();
+	});
+}
+
+export {isTimeSlotAvailable, isTimeSlotSelected};

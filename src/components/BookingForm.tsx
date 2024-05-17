@@ -2,12 +2,20 @@ import {Dispatch, ReactNode, SetStateAction} from "react";
 import {TimeSlot} from "../types/datatypes.ts";
 import {formatDate} from "../utils/dateUtils.ts";
 
-function SelectedTimeSlot({start, end} : TimeSlot) {
+interface SelectedTimeSlotProps {
+	timeslot: TimeSlot;
+	onClick: () => void;
+}
+
+function SelectedTimeSlot({timeslot, onClick} : SelectedTimeSlotProps) {
 	return (
-		<div className="border bg-green text-gray p-1 rounded">
-			<div className="text-xs">{formatDate(start)}</div>
+		<div
+			className="border bg-green text-gray p-1 rounded cursor-pointer"
+			onClick={onClick}
+		>
+			<div className="text-xs">{formatDate(timeslot.start)}</div>
 			<div className="text-center font-semibold">
-				{start.getHours()}:00 - {end.getHours()}:00
+				{timeslot.start.getHours()}:00 - {timeslot.end.getHours()}:00
 			</div>
 		</div>
 	);
@@ -30,7 +38,10 @@ function BookingForm({children, selectedTimeslots, setSelectedTimeslots, onSubmi
 			<div className="overflow-y-auto h-20 p-2 bg-gray-light flex flex-col gap-2">
 				{selectedTimeslots.map((timeslot) => (
 					<div key={timeslot.start.getTime()}>
-						<SelectedTimeSlot start={timeslot.start} end={timeslot.end} />
+						<SelectedTimeSlot
+							timeslot={timeslot}
+							onClick={() => setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()))}
+						/>
 					</div>
 				))}
 			</div>

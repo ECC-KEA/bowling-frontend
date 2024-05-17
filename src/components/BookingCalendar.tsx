@@ -1,7 +1,7 @@
 import type {Booking, TimeSlot} from "../types/datatypes.ts";
-import {ReactNode, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {formatDate} from "../utils/dateUtils.ts";
-import {isTimeSlotAvailable} from "../helpers/bookinghelpers.ts";
+import {isTimeSlotAvailable, isTimeSlotSelected} from "../helpers/bookinghelpers.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 
@@ -10,23 +10,28 @@ interface TimeSlotBoxProps {
 	onSelect: () => void;
 	onDeselect: () => void;
 	available: boolean;
+	selected: boolean;
 }
 
-function TimeSlotBox({timeSlot, onSelect, onDeselect, available}: TimeSlotBoxProps) {
-	const [selected, setSelected] = useState(false);
+function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: TimeSlotBoxProps) {
+	const [isSelected, setIsSelected] = useState(selected);
+
+	useEffect(() => {
+		setIsSelected(selected);
+	}, [selected]);
 
 	return (
 		<div
 			className={
-			selected ? "rounded p-2 text-center font-semibold bg-blue-700 hover:bg-blue-800 cursor-pointer select-none":
-				available
-					? "rounded p-2 text-center font-semibold bg-green hover:bg-green-800 cursor-pointer select-none"
-					: "rounded p-2 text-center font-semibold bg-red text-gray select-none"
+				isSelected ? "rounded p-2 text-center font-semibold bg-blue-700 hover:bg-blue-800 cursor-pointer select-none transition-colors" :
+					available
+						? "rounded p-2 text-center font-semibold bg-green hover:bg-green-800 cursor-pointer select-none transition-colors"
+						: "rounded p-2 text-center font-semibold bg-red text-gray select-none transition-colors"
 			}
 			onClick={() => {
 				available ? onSelect() : undefined;
-				selected ? onDeselect() : undefined;
-				setSelected(!selected)
+				isSelected ? onDeselect() : undefined;
+				setIsSelected(!isSelected)
 			}}
 		>
 			{timeSlot.start.getHours()}:00 - {timeSlot.end.getHours()}:00
@@ -39,9 +44,10 @@ interface TimeSlotGroupProps {
 	bookings: Booking[];
 	onTimeslotSelect: (timeslot: TimeSlot) => void;
 	onTimeslotDeselect: (timeslot: TimeSlot) => void;
+	selectedTimeslots: TimeSlot[];
 }
 
-function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect}: TimeSlotGroupProps) {
+function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect, selectedTimeslots}: TimeSlotGroupProps) {
 	const openingHour = 10;
 	const closingHour = 20;
 
@@ -68,6 +74,7 @@ function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect}: T
 						onDeselect={() => onTimeslotDeselect(timeslot)}
 						timeSlot={timeslot}
 						available={isTimeSlotAvailable(bookings, timeslot)}
+						selected={isTimeSlotSelected(selectedTimeslots, timeslot)}
 					/>
 				))}
 			</div>
@@ -101,9 +108,10 @@ function BookingCalendar(props: BookingCalendarProps) {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
 					<h1 className="text-4xl font-semibold">{props.title}</h1>
-					<FaArrowLeft className="text-2xl cursor-pointer" onClick={() => props.setFromDate(sevenDaysAgo)} />
+					<FaArrowLeft className="text-2xl cursor-pointer" onClick={() => props.setFromDate(sevenDaysAgo)}/>
 					{props.datePicker}
-					<FaArrowRight className="text-2xl cursor-pointer" onClick={() => props.setFromDate(sevenDaysFromNow)} />
+					<FaArrowRight className="text-2xl cursor-pointer"
+								  onClick={() => props.setFromDate(sevenDaysFromNow)}/>
 				</div>
 				<div className="text-lg">
 					{formatDate(props.fromDate)} - {formatDate(endDate)}
@@ -117,6 +125,7 @@ function BookingCalendar(props: BookingCalendarProps) {
 						bookings={props.bookings}
 						onTimeslotSelect={props.onTimeslotSelect}
 						onTimeslotDeselect={props.onTimeslotDeselect}
+						selectedTimeslots={props.selectedTimeslots}
 					/>
 				))}
 			</div>

@@ -1,10 +1,15 @@
-import {Dispatch, FormEventHandler, ReactNode, SetStateAction} from "react";
+import {Dispatch, ReactNode, SetStateAction} from "react";
 import {TimeSlot} from "../types/datatypes.ts";
 import {formatDate} from "../utils/dateUtils.ts";
 
-function TimeSlotString({start, end} : TimeSlot) {
+function SelectedTimeSlot({start, end} : TimeSlot) {
 	return (
-		`${formatDate(start)} -> ${formatDate(end)}`
+		<div className="border bg-green text-gray p-1 rounded">
+			<div className="text-xs">{formatDate(start)}</div>
+			<div className="text-center font-semibold">
+				{start.getHours()}:00 - {end.getHours()}:00
+			</div>
+		</div>
 	);
 }
 
@@ -12,7 +17,7 @@ interface BookingFormProps {
 	children: ReactNode;
 	selectedTimeslots: TimeSlot[];
 	setSelectedTimeslots: Dispatch<SetStateAction<TimeSlot[]>>
-	onSubmit: FormEventHandler<HTMLFormElement>;
+	onSubmit: () => void;
 }
 
 function BookingForm({children, selectedTimeslots, setSelectedTimeslots, onSubmit} : BookingFormProps) {
@@ -22,14 +27,14 @@ function BookingForm({children, selectedTimeslots, setSelectedTimeslots, onSubmi
 			<span className="font-semibold text-xl">
 				Selected timeslots
 			</span>
-			<ul className="overflow-y-auto h-20">
+			<div className="overflow-y-auto h-20 p-2 bg-gray-light flex flex-col gap-2">
 				{selectedTimeslots.map((timeslot) => (
-					<li key={timeslot.start.getTime()}>
-						- <TimeSlotString start={timeslot.start} end={timeslot.end} />
-					</li>
+					<div key={timeslot.start.getTime()}>
+						<SelectedTimeSlot start={timeslot.start} end={timeslot.end} />
+					</div>
 				))}
-			</ul>
-			<form className="flex flex-col gap-4 justify-between" onSubmit={onSubmit}>
+			</div>
+			<form className="flex flex-col gap-4 justify-between" onSubmit={(e) => {e.preventDefault(); onSubmit();}}>
 				<div className="h-52 p-4 flex flex-col gap-4">
 					{children}
 				</div>

@@ -14,7 +14,7 @@ export default {
             light: "#EEEEEE"
           },
           green: {
-            DEFAULT: "#C7F4CB"
+            DEFAULT: "#aaf8b0"
           },
           red: {
             DEFAULT: "#E06868"

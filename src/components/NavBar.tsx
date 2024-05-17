@@ -9,8 +9,8 @@ function NavButton({to, children, onClick, selected}: { to: string, children: Re
 			<button
 				className={
 					selected
-						? "text-2xl text-gray-light font-semibold bg-gray p-4 w-56 cursor-default"
-						: "text-2xl text-gray font-semibold bg-gray-light p-4 w-56 hover:bg-gray-medium transition-colors"
+						? "text-gray-light font-semibold bg-gray p-4 w-56 cursor-default"
+						: "text-gray font-semibold bg-gray-light p-4 w-56 hover:bg-gray-medium transition-colors"
 				}
 			>
 				{children}

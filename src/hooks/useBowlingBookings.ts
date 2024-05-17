@@ -22,11 +22,20 @@ function useBowlingBookings() {
 		}
 	}
 
-	const queryParam = {key: "fromDate", value: fromDate.toISOString()};
-
 	const fetchBookings = async () => {
 		try {
-			const bookings = await dataService.getAll([queryParam]);
+			const queryParams = [
+				{
+					key: "day", value: fromDate.getDate()
+				},
+				{
+					key: "month", value: fromDate.getMonth()+1
+				},
+				{
+					key: "year", value: fromDate.getFullYear()
+				}
+			];
+			const bookings = await dataService.getAll(queryParams);
 			setBookings(bookings.map(mapDTOToBooking));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
@@ -40,7 +49,7 @@ function useBowlingBookings() {
 	}, [fromDate]);
 
 
-	return {bookings, loading, setFromDate};
+	return {bookings, loading, fromDate, setFromDate};
 }
 
 export default useBowlingBookings;

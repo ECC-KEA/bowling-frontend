@@ -74,7 +74,7 @@ class DataService<T, DTO> {
 			method: "DELETE"
 		});
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! status: ${response.status} ${await response.json()}`);
 		}
 	}
 

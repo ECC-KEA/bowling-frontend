@@ -18,4 +18,4 @@ interface BowlingBooking extends Booking{
 	childFriendly: boolean;
 }
 
-export type {BowlingBooking, TimeSlot}
+export type {BowlingBooking, TimeSlot, Booking}

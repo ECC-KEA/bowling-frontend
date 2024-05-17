@@ -3,7 +3,7 @@ interface QueryParam {
 	value: string|number;
 }
 
-class DataService<T, DTO> {
+class DataService<DTO> {
 	private readonly endpoint = import.meta.env.VITE_API_URL;
 	private readonly uri: string;
 
@@ -27,7 +27,7 @@ class DataService<T, DTO> {
 		return await response.json();
 	}
 
-	public async create(entity: T): Promise<DTO> {
+	public async create(entity: Partial<DTO>): Promise<DTO> {
 		const response = await fetch(this.endpoint + this.uri, {
 			method: "POST",
 			headers: {
@@ -41,7 +41,7 @@ class DataService<T, DTO> {
 		return await response.json();
 	}
 
-	public async update(entity: T): Promise<DTO> {
+	public async update(entity: DTO): Promise<DTO> {
 		const response = await fetch(this.endpoint + this.uri, {
 			method: "PUT",
 			headers: {
@@ -55,7 +55,7 @@ class DataService<T, DTO> {
 		return await response.json();
 	}
 
-	public async patch(entity: Partial<T>): Promise<DTO> {
+	public async patch(entity: Partial<DTO>): Promise<DTO> {
 		const response = await fetch(this.endpoint + this.uri, {
 			method: "PATCH",
 			headers: {

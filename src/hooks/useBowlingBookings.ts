@@ -1,14 +1,15 @@
 import {useEffect, useState} from "react";
 import type {BowlingBooking} from "../types/datatypes.ts";
 import DataService from "../utils/DataService.ts";
-import {BowlingBookingDTO} from "../types/transfertypes.ts";
+import {BowlingBookingDTO, Status} from "../types/transfertypes.ts";
 import toast from "react-hot-toast";
+import {formatDateForJavaLocalDateTime} from "../utils/dateUtils.ts";
 
 function useBowlingBookings() {
 	const [bookings, setBookings] = useState<BowlingBooking[]>([]);
 	const [fromDate, setFromDate] = useState<Date>(new Date());
 	const [loading, setLoading] = useState<boolean>(true);
-	const dataService = new DataService<BowlingBooking, BowlingBookingDTO>("/bowling");
+	const dataService = new DataService<BowlingBookingDTO>("/bowling");
 
 	const mapDTOToBooking = (dto: BowlingBookingDTO): BowlingBooking => {
 		return {
@@ -19,6 +20,15 @@ function useBowlingBookings() {
 			status: dto.status,
 			laneId: dto.laneId,
 			childFriendly: dto.childFriendly
+		}
+	}
+
+	const mapBookingToDTO = (booking: Partial<BowlingBooking>): Partial<BowlingBookingDTO> => {
+		return {
+			customerEmail: booking.customerEmail,
+			start: formatDateForJavaLocalDateTime(booking.start),
+			end: formatDateForJavaLocalDateTime(booking.end),
+			childFriendly: booking.childFriendly ?? false
 		}
 	}
 
@@ -48,8 +58,45 @@ function useBowlingBookings() {
 		fetchBookings().finally(() => setLoading(false));
 	}, [fromDate]);
 
+	const create = async (booking: Partial<BowlingBooking>) => {
+		try {
+			const defaultBooking = {
+				id: -1,
+				customerEmail: "",
+				start: new Date(),
+				end: new Date(),
+				status: Status.CANCELLED,
+				laneId: -1,
+				childFriendly: false
+			}
+			booking = {...defaultBooking, ...booking};
+			const dto = mapBookingToDTO(booking);
+			const createdBooking = await dataService.create(dto);
+			return mapDTOToBooking(createdBooking);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				toast.error("Failed to create booking: " + error.message);
+			}
+			throw error;
+		}
+	}
 
-	return {bookings, loading, fromDate, setFromDate};
+	const createMany = async (bookings: Partial<BowlingBooking>[]) => {
+		try{
+			setLoading(true);
+			const createdBookings = await Promise.all(bookings.map(create));
+			setBookings((currentBookings) => [...currentBookings, ...createdBookings]);
+			setLoading(false);
+			toast.success("Bookings created successfully");
+			return createdBookings;
+		} catch (error: unknown){
+			if (error instanceof Error){
+				toast.error("Failed to create bookings: " + error.message);
+			}
+		}
+	}
+
+	return {bookings, createMany, loading, fromDate, setFromDate};
 }
 
 export default useBowlingBookings;

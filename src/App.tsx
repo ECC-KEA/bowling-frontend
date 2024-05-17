@@ -14,7 +14,7 @@ function App() {
                 <Route path="/bowling" element={<BowlingBooking />} />
                 {/*TODO: add routes to airhockey, dinnerbooking, login etc.*/}
             </Routes>
-            <Toaster />
+            <Toaster position={"bottom-left"}/>
         </BrowserRouter>
     );
 }

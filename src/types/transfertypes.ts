@@ -18,4 +18,5 @@ enum Status {
 	NO_SHOW = "NO_SHOW"
 }
 
-export type {BowlingBookingDTO, Status}
+export type {BowlingBookingDTO}
+export {Status}

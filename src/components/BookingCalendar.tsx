@@ -1,7 +1,7 @@
 import type {Booking, TimeSlot} from "../types/datatypes.ts";
 import {ReactNode, useEffect, useState} from "react";
 import {formatDate} from "../utils/dateUtils.ts";
-import {isTimeSlotAvailable, isTimeSlotSelected} from "../helpers/bookinghelpers.ts";
+import {isTimeSlotAvailable, isTimeSlotInList} from "../helpers/bookinghelpers.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 
@@ -56,6 +56,9 @@ function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect, se
 	for (let i = openingHour; i < closingHour; i++) {
 		const start = new Date(date);
 		start.setHours(i);
+		start.setMinutes(0);
+		start.setSeconds(0);
+		start.setMilliseconds(0);
 		const end = new Date(date);
 		end.setHours(i + 1);
 		timeslots.push({start, end});
@@ -74,7 +77,7 @@ function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect, se
 						onDeselect={() => onTimeslotDeselect(timeslot)}
 						timeSlot={timeslot}
 						available={isTimeSlotAvailable(bookings, timeslot)}
-						selected={isTimeSlotSelected(selectedTimeslots, timeslot)}
+						selected={isTimeSlotInList(selectedTimeslots, timeslot)}
 					/>
 				))}
 			</div>
@@ -108,10 +111,15 @@ function BookingCalendar(props: BookingCalendarProps) {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
 					<h1 className="text-4xl font-semibold">{props.title}</h1>
-					<FaArrowLeft className="text-2xl cursor-pointer" onClick={() => props.setFromDate(sevenDaysAgo)}/>
+					<FaArrowLeft
+						className="text-2xl cursor-pointer"
+						onClick={() => props.setFromDate(sevenDaysAgo)}
+					/>
 					{props.datePicker}
-					<FaArrowRight className="text-2xl cursor-pointer"
-								  onClick={() => props.setFromDate(sevenDaysFromNow)}/>
+					<FaArrowRight
+						className="text-2xl cursor-pointer"
+						onClick={() => props.setFromDate(sevenDaysFromNow)}
+					/>
 				</div>
 				<div className="text-lg">
 					{formatDate(props.fromDate)} - {formatDate(endDate)}

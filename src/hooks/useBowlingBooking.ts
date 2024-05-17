@@ -40,8 +40,6 @@ function useBowlingBookings() {
 	}, [fromDate]);
 
 
-
-
 	return {bookings, loading, setFromDate};
 }
 

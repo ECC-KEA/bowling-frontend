@@ -8,9 +8,14 @@ interface Booking{
 	status: Status;
 }
 
+interface TimeSlot{
+	start: Date;
+	end: Date;
+}
+
 interface BowlingBooking extends Booking{
 	laneId: number;
 	childFriendly: boolean;
 }
 
-export type {BowlingBooking}
+export type {BowlingBooking, TimeSlot}

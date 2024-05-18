@@ -1,13 +1,19 @@
 import BookingCalendar from "../components/BookingCalendar.tsx";
 import BookingForm from "../components/BookingForm.tsx";
-import type {BowlingBooking, TimeSlot} from "../types/datatypes.ts";
-import {useState} from "react";
+import type {TimeSlot} from "../types/generic.types.ts";
+import type {BowlingBooking} from "../types/bowling.types.ts";
+import {useEffect, useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
 import BookingDatePicker from "../components/BookingDatePicker.tsx";
 import useBowlingBookings from "../hooks/useBowlingBookings.ts";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
-import {filterOutTimeslots, getAdjacentSelectedTimeslots} from "../helpers/bookinghelpers.ts";
+import {
+	filterOutTimeslots,
+	getAdjacentSelectedTimeslots,
+	isChildFriendlyAvailable,
+	isNotChildFriendlyAvailable
+} from "../helpers/bookinghelpers.ts";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
 
 function BowlingBooking() {
@@ -16,7 +22,12 @@ function BowlingBooking() {
 	const [email, setEmail] = useState<string>("");
 	const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 	const [newBookings, setNewBookings] = useState<BowlingBooking[]>([]);
-	const {bookings, createMany, loading, fromDate, setFromDate} = useBowlingBookings();
+	const {bookings, lanes, createMany, loading, fromDate, setFromDate} = useBowlingBookings();
+
+	useEffect(() => {
+		setSelectedTimeslots(selectedTimeslots.filter(isTimeSlotAvailable));
+	}, [childFriendly]);
+
 	const onSubmit = async () => {
 		const newB = await createMany(selectedTimeslots
 			.map((timeslot) => ({
@@ -29,8 +40,10 @@ function BowlingBooking() {
 		setEmail("");
 		setChildFriendly(false);
 
-		setShowConfirmation(true);
-		setNewBookings(newB ?? []);
+		if(newB !== undefined){
+			setShowConfirmation(true);
+			setNewBookings(newB ?? []);
+		}
 	}
 
 	const onDismiss = () => {
@@ -61,6 +74,19 @@ function BowlingBooking() {
 		setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()));
 	}
 
+	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{
+		if(childFriendly){
+			return isChildFriendlyAvailable(lanes, bookings, timeSlot);
+		}
+		return isNotChildFriendlyAvailable(lanes, bookings, timeSlot);
+	}
+
+	const getBookingPrice = (booking: BowlingBooking): number => {
+		const duration = booking.end.getHours() - booking.start.getHours();
+		const price = booking.lane.pricePerHour ?? 0;
+		return price * duration;
+	}
+
 	return (
 		<PageLayout>
 			<div className="flex gap-8 items-end relative">
@@ -83,6 +109,7 @@ function BowlingBooking() {
 					<div className="flex gap-8">
 						<label className="flex items-center gap-2">
 							<input
+								checked={childFriendly}
 								required={true}
 								unselectable={"off"}
 								type="radio"
@@ -94,6 +121,7 @@ function BowlingBooking() {
 						</label>
 						<label className="flex items-center gap-2">
 							<input
+								checked={!childFriendly}
 								required={true}
 								unselectable={"off"}
 								type="radio"
@@ -111,11 +139,10 @@ function BowlingBooking() {
 						selectedTimeslots={selectedTimeslots}
 						onTimeslotSelect={onTimeslotSelect}
 						onTimeslotDeselect={onTimeslotDeselect}
-						datePicker={<BookingDatePicker
-							onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>}
+						datePicker={<BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>}
 						fromDate={fromDate}
-						bookings={bookings}
 						setFromDate={setFromDate}
+						isTimeSlotAvailable={isTimeSlotAvailable}
 					/>
 				</ShowIf>
 				<ShowIf condition={loading}>
@@ -124,7 +151,11 @@ function BowlingBooking() {
 					</div>
 				</ShowIf>
 				<ShowIf condition={showConfirmation}>
-					<BookingConfirmationModal onDismiss={onDismiss} newBookings={newBookings}/>
+					<BookingConfirmationModal
+						onDismiss={onDismiss}
+						newBookings={newBookings}
+						getPrice={getBookingPrice}
+					/>
 				</ShowIf>
 			</div>
 		</PageLayout>

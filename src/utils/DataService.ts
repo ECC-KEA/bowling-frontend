@@ -14,7 +14,7 @@ class DataService<DTO> {
 	public async getAll(queryParams? : QueryParam[]): Promise<DTO[]> {
 		const response = await fetch(this.endpoint + this.uri + this.createQueryParamString(queryParams));
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
 		}
 		return await response.json();
 	}
@@ -22,7 +22,7 @@ class DataService<DTO> {
 	public async get(id: number): Promise<DTO> {
 		const response = await fetch(this.endpoint + this.uri + `/${id}`);
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
 		}
 		return await response.json();
 	}
@@ -36,7 +36,7 @@ class DataService<DTO> {
 			body: JSON.stringify(entity)
 		});
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
 		}
 		return await response.json();
 	}
@@ -64,7 +64,7 @@ class DataService<DTO> {
 			body: JSON.stringify(entity)
 		});
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}`);
+			throw new Error(`HTTP error! status: ${response.status} , ${await response.text()}`);
 		}
 		return await response.json();
 	}
@@ -74,7 +74,7 @@ class DataService<DTO> {
 			method: "DELETE"
 		});
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status} ${await response.json()}`);
+			throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
 		}
 	}
 

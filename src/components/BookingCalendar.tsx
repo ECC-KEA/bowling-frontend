@@ -1,7 +1,7 @@
-import type {Booking, TimeSlot} from "../types/datatypes.ts";
+import type {TimeSlot} from "../types/generic.types.ts";
 import {ReactNode, useEffect, useState} from "react";
 import {formatDate} from "../utils/dateUtils.ts";
-import {isTimeSlotAvailable, isTimeSlotInList} from "../helpers/bookinghelpers.ts";
+import {isTimeSlotInList} from "../helpers/bookinghelpers.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 
 
@@ -15,6 +15,9 @@ interface TimeSlotBoxProps {
 
 function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: TimeSlotBoxProps) {
 	const [isSelected, setIsSelected] = useState(selected);
+	if(timeSlot.start.getTime() < Date.now()) {
+		available = false;
+	}
 
 	useEffect(() => {
 		setIsSelected(selected);
@@ -31,7 +34,7 @@ function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: Time
 			onClick={() => {
 				available ? onSelect() : undefined;
 				isSelected ? onDeselect() : undefined;
-				setIsSelected(!isSelected)
+				available ? setIsSelected(!isSelected) : undefined;
 			}}
 		>
 			{timeSlot.start.getHours()}:00 - {timeSlot.end.getHours()}:00
@@ -41,13 +44,13 @@ function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: Time
 
 interface TimeSlotGroupProps {
 	date: Date;
-	bookings: Booking[];
 	onTimeslotSelect: (timeslot: TimeSlot) => void;
 	onTimeslotDeselect: (timeslot: TimeSlot) => void;
 	selectedTimeslots: TimeSlot[];
+	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
 }
 
-function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect, selectedTimeslots}: TimeSlotGroupProps) {
+function TimeSlotGroup({date, onTimeslotSelect, onTimeslotDeselect, selectedTimeslots, isTimeSlotAvailable}: TimeSlotGroupProps) {
 	const openingHour = 10;
 	const closingHour = 20;
 
@@ -76,7 +79,7 @@ function TimeSlotGroup({date, bookings, onTimeslotSelect, onTimeslotDeselect, se
 						onSelect={() => onTimeslotSelect(timeslot)}
 						onDeselect={() => onTimeslotDeselect(timeslot)}
 						timeSlot={timeslot}
-						available={isTimeSlotAvailable(bookings, timeslot)}
+						available={isTimeSlotAvailable(timeslot)}
 						selected={isTimeSlotInList(selectedTimeslots, timeslot)}
 					/>
 				))}
@@ -93,7 +96,7 @@ interface BookingCalendarProps {
 	datePicker: ReactNode;
 	fromDate: Date;
 	setFromDate: (date: Date) => void;
-	bookings: Booking[];
+	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
 }
 
 function BookingCalendar(props: BookingCalendarProps) {
@@ -130,10 +133,10 @@ function BookingCalendar(props: BookingCalendarProps) {
 					<TimeSlotGroup
 						key={date.getTime()}
 						date={date}
-						bookings={props.bookings}
 						onTimeslotSelect={props.onTimeslotSelect}
 						onTimeslotDeselect={props.onTimeslotDeselect}
 						selectedTimeslots={props.selectedTimeslots}
+						isTimeSlotAvailable={props.isTimeSlotAvailable}
 					/>
 				))}
 			</div>

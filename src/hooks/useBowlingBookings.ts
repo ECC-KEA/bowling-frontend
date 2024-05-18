@@ -1,15 +1,23 @@
 import {useEffect, useState} from "react";
-import type {BowlingBooking} from "../types/datatypes.ts";
+import type {BowlingBooking, BowlingBookingDTO, BowlingLane} from "../types/bowling.types.ts";
 import DataService from "../utils/DataService.ts";
-import {BowlingBookingDTO, Status} from "../types/transfertypes.ts";
+import {Status} from "../types/generic.types.ts";
 import toast from "react-hot-toast";
 import {formatDateForJavaLocalDateTime} from "../utils/dateUtils.ts";
 
 function useBowlingBookings() {
 	const [bookings, setBookings] = useState<BowlingBooking[]>([]);
+	const [lanes, setLanes] = useState<BowlingLane[]>([]);
 	const [fromDate, setFromDate] = useState<Date>(new Date());
 	const [loading, setLoading] = useState<boolean>(true);
 	const dataService = new DataService<BowlingBookingDTO>("/bowling");
+	const bowlingLaneService = new DataService<BowlingLane>("/lanes");
+
+	const defaultLane = {
+		id: -1,
+		childFriendly: false,
+		pricePerHour: 0
+	}
 
 	const mapDTOToBooking = (dto: BowlingBookingDTO): BowlingBooking => {
 		return {
@@ -18,7 +26,7 @@ function useBowlingBookings() {
 			start: new Date(dto.start),
 			end: new Date(dto.end),
 			status: dto.status,
-			laneId: dto.laneId,
+			lane: lanes.find(l => l.id === dto.laneId) ?? defaultLane,
 			childFriendly: dto.childFriendly
 		}
 	}
@@ -29,6 +37,17 @@ function useBowlingBookings() {
 			start: formatDateForJavaLocalDateTime(booking.start),
 			end: formatDateForJavaLocalDateTime(booking.end),
 			childFriendly: booking.childFriendly ?? false
+		}
+	}
+
+	const fetchLanes = async () => {
+		try {
+			const lanes = await bowlingLaneService.getAll();
+			setLanes(lanes);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				toast.error("Failed to fetch lanes: " + error.message);
+			}
 		}
 	}
 
@@ -46,7 +65,7 @@ function useBowlingBookings() {
 				}
 			];
 			const bookings = await dataService.getAll(queryParams);
-			setBookings(bookings.map(mapDTOToBooking));
+			setBookings(bookings.filter(b => b.status === Status.BOOKED || b.status === Status.PAID).map(mapDTOToBooking));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				toast.error("Failed to fetch bookings: " + error.message);
@@ -55,8 +74,12 @@ function useBowlingBookings() {
 	}
 
 	useEffect(() => {
-		fetchBookings().finally(() => setLoading(false));
-	}, [fromDate]);
+		void fetchLanes();
+	}, []);
+
+	useEffect(() => {
+		fetchBookings().then(() => setLoading(false));
+	}, [lanes, fromDate]);
 
 	const create = async (booking: Partial<BowlingBooking>) => {
 		try {
@@ -86,17 +109,18 @@ function useBowlingBookings() {
 			setLoading(true);
 			const createdBookings = await Promise.all(bookings.map(create));
 			setBookings((currentBookings) => [...currentBookings, ...createdBookings]);
-			setLoading(false);
 			toast.success("Bookings created successfully");
 			return createdBookings;
 		} catch (error: unknown){
 			if (error instanceof Error){
 				toast.error("Failed to create bookings: " + error.message);
 			}
+		} finally {
+			setLoading(false);
 		}
 	}
 
-	return {bookings, createMany, loading, fromDate, setFromDate};
+	return {bookings, lanes, createMany, loading, fromDate, setFromDate};
 }
 
 export default useBowlingBookings;

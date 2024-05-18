@@ -1,5 +1,5 @@
 import {Dispatch, ReactNode, SetStateAction} from "react";
-import {TimeSlot} from "../types/datatypes.ts";
+import {TimeSlot} from "../types/generic.types.ts";
 import {formatDate} from "../utils/dateUtils.ts";
 
 interface SelectedTimeSlotProps {

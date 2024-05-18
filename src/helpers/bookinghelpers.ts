@@ -1,15 +1,6 @@
-import {Booking, TimeSlot} from "../types/datatypes.ts";
+import {TimeSlot} from "../types/generic.types.ts";
 import {isBetween, isSameDay} from "../utils/dateUtils.ts";
-
-function isTimeSlotAvailable(bookings: Booking[], timeSlot: TimeSlot): boolean {
-	return !bookings.some(b => {
-		const bookingTimeSlot = {
-			start: b.start,
-			end: b.end
-		}
-		return isSameTimeSlot(bookingTimeSlot, timeSlot);
-	});
-}
+import {BowlingBooking, BowlingLane} from "../types/bowling.types.ts";
 
 function isTimeSlotInList(selectedTimeslots: TimeSlot[], timeSlot: TimeSlot): boolean {
 	return selectedTimeslots.some(ts => isSameTimeSlot(ts, timeSlot));
@@ -37,4 +28,26 @@ function filterOutTimeslots(timeSlotsToFilter: TimeSlot[], timeSlotsToRemove: Ti
 	return timeSlotsToFilter.filter((ts) => !isTimeSlotInList(timeSlotsToRemove, ts));
 }
 
-export {isTimeSlotAvailable, isTimeSlotInList, getAdjacentSelectedTimeslots, filterOutTimeslots};
+function isLaneBooked(bookings: BowlingBooking[], laneId: number, timeSlot: TimeSlot): boolean {
+	return bookings.some((booking) => {
+		const bookingTimeSlot = {
+			start: booking.start,
+			end: booking.end
+		}
+		return booking.lane.id === laneId && isSameTimeSlot(bookingTimeSlot, timeSlot)
+	});
+}
+
+function isChildFriendlyAvailable(lanes: BowlingLane[], bookings: BowlingBooking[], timeSlot: TimeSlot): boolean {
+	return lanes.some((lane) => {
+		return !isLaneBooked(bookings, lane.id, timeSlot) && lane.childFriendly;
+	});
+}
+
+function isNotChildFriendlyAvailable(lanes: BowlingLane[], bookings: BowlingBooking[], timeSlot: TimeSlot): boolean {
+	return lanes.some((lane) => {
+		return !isLaneBooked(bookings, lane.id, timeSlot) && !lane.childFriendly;
+	});
+}
+
+export {isTimeSlotInList, getAdjacentSelectedTimeslots, filterOutTimeslots, isSameTimeSlot, isLaneBooked, isChildFriendlyAvailable, isNotChildFriendlyAvailable};

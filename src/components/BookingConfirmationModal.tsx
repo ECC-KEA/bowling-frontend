@@ -1,12 +1,14 @@
-import {Booking} from "../types/datatypes.ts";
+import {Booking} from "../types/generic.types.ts";
 import {formatDate} from "../utils/dateUtils.ts";
+import {formatPrice} from "../utils/priceUtils.ts";
 
-interface BookingConfirmationModalProps {
+interface BookingConfirmationModalProps<T extends Booking> {
 	onDismiss: () => void;
-	newBookings: Booking[];
+	newBookings: T[];
+	getPrice: (booking: T) => number;
 }
 
-function BookingConfirmationModal({onDismiss, newBookings}: BookingConfirmationModalProps) {
+function BookingConfirmationModal<T extends Booking>({onDismiss, newBookings, getPrice}: BookingConfirmationModalProps<T>) {
 	return (
 		<div className="absolute w-full h-full flex items-center justify-center z-50 bg-gray bg-opacity-50 backdrop-blur-sm">
 			<div className="bg-gray-light p-8 min-h-60 min-w-96">
@@ -16,6 +18,7 @@ function BookingConfirmationModal({onDismiss, newBookings}: BookingConfirmationM
 					{newBookings.map((booking) => (
 						<li key={booking.id} className="flex flex-col">
 							<span className="font-semibold">Reference nr: <span className="text-green-800 text-2xl">{booking.id}</span></span>
+							<span className="font-semibold">Price: {formatPrice(getPrice(booking))}</span>
 							<span>
 								{formatDate(booking.start)} {booking.start.getHours()}:00 - {booking.end.getHours()}:00
 							</span>

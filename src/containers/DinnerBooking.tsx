@@ -30,7 +30,7 @@ function DinnerBooking() {
             })));
         setSelectedTimeslots([]);
         setEmail("");
-        setNumberOfGuests(0);
+        setNumberOfGuests(-1);
         if(newB !== undefined){
             setShowConfirmation(true);
             setNewBookings(newB ?? []);
@@ -67,7 +67,6 @@ function DinnerBooking() {
 	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{
 		return isCapacityNotReached(numberOfGuests, bookings, restaurant ? restaurant.capacity : 0, timeSlot);
 	}
-    
 
     return (
 		<PageLayout>
@@ -106,7 +105,7 @@ function DinnerBooking() {
 						fromDate={fromDate}
 						setFromDate={setFromDate}
 						isTimeSlotAvailable={isTimeSlotAvailable}
-                        isDisabled={numberOfGuests <= 0}
+                        isDisabled={numberOfGuests <= 0 || isNaN(numberOfGuests)}
                         errorMessage={"Please select a number of guests"}
 					/>
 				</ShowIf>

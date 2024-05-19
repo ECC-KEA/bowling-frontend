@@ -86,7 +86,6 @@ function useDinnerBookings() {
 			}
 			booking = {...defaultBooking, ...booking};
 			const dto = mapBookingToDTO(booking);
-			console.log(dto);
 			const createdBooking = await dataService.create(dto);
 			return mapDTOToBooking(createdBooking);
 		} catch (error: unknown) {

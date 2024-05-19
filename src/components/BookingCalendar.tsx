@@ -91,14 +91,14 @@ function TimeSlotGroup({date, onTimeslotSelect, onTimeslotDeselect, selectedTime
 							if (!isDisabled) {
 								onTimeslotSelect(timeslot)
 							} else {
-								toast.error(errorMessage);
+								toast.error(errorMessage, {icon: "🔒", style:{backgroundColor: "lightyellow"}});
 							}
 						}}
 						onDeselect={() => {
 							if (!isDisabled) {
 								onTimeslotDeselect(timeslot)
 							} else {
-								toast.error(errorMessage);
+								toast.error(errorMessage, {icon: "🔒", style:{backgroundColor: "lightyellow"}});
 							}
 						}}
 						timeSlot={timeslot}
@@ -131,7 +131,7 @@ function BookingCalendar(props: BookingCalendarProps) {
 	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
 	const sevenDaysFromNow = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 7));
 	const sevenDaysAgo = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() - 7));
-	// create an array of dates from fromDate to endDate
+
 	const dates = [];
 
 	for (let i = new Date(props.fromDate); i <= endDate; i.setDate(i.getDate() + 1)) {

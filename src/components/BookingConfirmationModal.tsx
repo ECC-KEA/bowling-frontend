@@ -1,6 +1,7 @@
 import {Booking} from "../types/generic.types.ts";
 import {formatDate} from "../utils/dateUtils.ts";
 import {formatPrice} from "../utils/priceUtils.ts";
+import ShowIf from "./ShowIf.tsx";
 
 interface BookingConfirmationModalProps<T extends Booking> {
 	onDismiss: () => void;
@@ -18,13 +19,9 @@ function BookingConfirmationModal<T extends Booking>({onDismiss, newBookings, ge
 					{newBookings.map((booking) => (
 						<li key={booking.id} className="flex flex-col">
 							<span className="font-semibold">Reference nr: <span className="text-green-800 text-2xl">{booking.id}</span></span>
-							{/*<ShowIf condition={typeof getPrice === 'function'}>
-								<span className="font-semibold">Price: {formatPrice(getPrice(booking))}</span>
+							<ShowIf condition={getPrice !== undefined}>
+								<span className="font-semibold">Price: {formatPrice(getPrice ? getPrice(booking) : 0)}</span>
 							</ShowIf>
-							*/}
-							{typeof getPrice === 'function' && (
-								<span className="font-semibold">Price: {formatPrice(getPrice(booking))}</span>
-							)}
 							<span>
 								{formatDate(booking.start)} {booking.start.getHours()}:00 - {booking.end.getHours()}:00
 							</span>

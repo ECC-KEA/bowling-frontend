@@ -1,6 +1,7 @@
 import {Dispatch, ReactNode, SetStateAction} from "react";
 import {TimeSlot} from "../types/generic.types.ts";
 import {formatDate} from "../utils/dateUtils.ts";
+import ShowIf from "./ShowIf.tsx";
 
 interface SelectedTimeSlotProps {
 	timeslot: TimeSlot;
@@ -32,19 +33,21 @@ function BookingForm({children, selectedTimeslots, setSelectedTimeslots, onSubmi
 	return (
 		<div className="bg-gray text-gray-light p-3 max-w-md flex flex-col gap-4 min-h-[70vh]">
 			<h1 className="w-full text-center font-semibold text-3xl">Booking</h1>
-			<span className="font-semibold text-xl">
-				Selected timeslots
-			</span>
-			<div className="overflow-y-auto h-20 p-2 bg-gray-light flex flex-col gap-2">
-				{selectedTimeslots.map((timeslot) => (
-					<div key={timeslot.start.getTime()}>
-						<SelectedTimeSlot
-							timeslot={timeslot}
-							onClick={() => setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()))}
-						/>
-					</div>
-				))}
-			</div>
+			<ShowIf condition={selectedTimeslots.length > 0}>
+				<span className="font-semibold text-xl">
+					Selected timeslots
+				</span>
+				<div className="overflow-y-auto h-20 p-2 bg-gray-light flex flex-col gap-2">
+					{selectedTimeslots.map((timeslot) => (
+						<div key={timeslot.start.getTime()}>
+							<SelectedTimeSlot
+								timeslot={timeslot}
+								onClick={() => setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()))}
+							/>
+						</div>
+					))}
+				</div>
+			</ShowIf>
 			<form className="flex flex-col gap-4 justify-between" onSubmit={(e) => {e.preventDefault(); onSubmit();}}>
 				<div className="h-52 p-4 flex flex-col gap-4">
 					{children}

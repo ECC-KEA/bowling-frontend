@@ -19,7 +19,25 @@ function App() {
                 
                 {/*TODO: add routes to dinnerbooking, login etc.*/}
             </Routes>
-            <Toaster position={"bottom-left"}/>
+            <Toaster
+                toastOptions={{
+                    position: "bottom-left",
+                    style: {
+                        padding: "20px",
+                        fontSize: "1.2rem"
+                    },
+                    success: {
+                        style: {
+                            backgroundColor: "#aaf8b0"
+                        }
+                    },
+                    error: {
+                        style: {
+                            backgroundColor: "#f8a0a0"
+                        }
+                    }
+                }}
+            />
         </BrowserRouter>
     );
 }

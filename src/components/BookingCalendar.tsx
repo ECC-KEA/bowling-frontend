@@ -3,6 +3,7 @@ import {ReactNode, useEffect, useState} from "react";
 import {formatDate} from "../utils/dateUtils.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {isTimeSlotInList} from "../helpers/timeslothelpers.ts";
+import toast from "react-hot-toast";
 
 
 interface TimeSlotBoxProps {
@@ -11,9 +12,10 @@ interface TimeSlotBoxProps {
 	onDeselect: () => void;
 	available: boolean;
 	selected: boolean;
+	isDisabled: boolean;
 }
 
-function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: TimeSlotBoxProps) {
+function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected, isDisabled}: TimeSlotBoxProps) {
 	const [isSelected, setIsSelected] = useState(selected);
 	if(timeSlot.start.getTime() < Date.now()) {
 		available = false;
@@ -28,13 +30,20 @@ function TimeSlotBox({timeSlot, onSelect, onDeselect, available, selected}: Time
 			className={
 				isSelected ? "rounded p-2 text-center font-semibold bg-blue-700 hover:bg-blue-800 cursor-pointer select-none transition-colors" :
 					available
-						? "rounded p-2 text-center font-semibold bg-green hover:bg-green-800 cursor-pointer select-none transition-colors"
-						: "rounded p-2 text-center font-semibold bg-red text-gray select-none transition-colors"
+						? `rounded p-2 text-center font-semibold  ${isDisabled ? `bg-gray-400`: `cursor-pointer bg-green hover:bg-green-800`} select-none transition-colors`
+						: `rounded p-2 text-center font-semibold bg-red ${isDisabled ? `bg-gray-400`: `bg-red`} text-gray select-none transition-colors`
 			}
 			onClick={() => {
-				available ? onSelect() : undefined;
+				if (isDisabled) {
+					onSelect();
+				} else {
+					available ? onSelect() : undefined;
+				}
 				isSelected ? onDeselect() : undefined;
-				available ? setIsSelected(!isSelected) : undefined;
+				if(!isDisabled) {
+					available ? setIsSelected(!isSelected) : undefined;
+				}
+				
 			}}
 		>
 			{timeSlot.start.getHours()}:00 - {timeSlot.end.getHours()}:00
@@ -48,9 +57,11 @@ interface TimeSlotGroupProps {
 	onTimeslotDeselect: (timeslot: TimeSlot) => void;
 	selectedTimeslots: TimeSlot[];
 	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
+	isDisabled: boolean
+	errorMessage: string;
 }
 
-function TimeSlotGroup({date, onTimeslotSelect, onTimeslotDeselect, selectedTimeslots, isTimeSlotAvailable}: TimeSlotGroupProps) {
+function TimeSlotGroup({date, onTimeslotSelect, onTimeslotDeselect, selectedTimeslots, isTimeSlotAvailable, isDisabled, errorMessage}: TimeSlotGroupProps) {
 	const openingHour = 10;
 	const closingHour = 20;
 
@@ -76,11 +87,24 @@ function TimeSlotGroup({date, onTimeslotSelect, onTimeslotDeselect, selectedTime
 				{timeslots.map((timeslot) => (
 					<TimeSlotBox
 						key={timeslot.start.getTime()}
-						onSelect={() => onTimeslotSelect(timeslot)}
-						onDeselect={() => onTimeslotDeselect(timeslot)}
+						onSelect={() => {
+							if (!isDisabled) {
+								onTimeslotSelect(timeslot)
+							} else {
+								toast.error(errorMessage);
+							}
+						}}
+						onDeselect={() => {
+							if (!isDisabled) {
+								onTimeslotDeselect(timeslot)
+							} else {
+								toast.error(errorMessage);
+							}
+						}}
 						timeSlot={timeslot}
 						available={isTimeSlotAvailable(timeslot)}
 						selected={isTimeSlotInList(selectedTimeslots, timeslot)}
+						isDisabled={isDisabled}
 					/>
 				))}
 			</div>
@@ -97,9 +121,13 @@ interface BookingCalendarProps {
 	fromDate: Date;
 	setFromDate: (date: Date) => void;
 	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
+	isDisabled?: boolean;
+	errorMessage?: string;
 }
 
 function BookingCalendar(props: BookingCalendarProps) {
+	const isDisabled = props.isDisabled ?? false;
+	const errorMessage = props.errorMessage ?? "Something went wrong";
 	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
 	const sevenDaysFromNow = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 7));
 	const sevenDaysAgo = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() - 7));
@@ -110,12 +138,12 @@ function BookingCalendar(props: BookingCalendarProps) {
 		dates.push(new Date(i));
 	}
 
-	return (<div className="flex flex-col h-[calc(100vh-200px)] w-full gap-2">
+	return (<div className={`flex flex-col h-[calc(100vh-200px)] w-full gap-2 ${isDisabled ? `opacity-50`: `` }`}>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
 					<h1 className="text-4xl font-semibold">{props.title}</h1>
 					<FaArrowLeft
-						className="text-2xl cursor-pointer"
+						className={`text-2xl ${isDisabled ? `` : `cursor-pointer`}`}
 						onClick={() => props.setFromDate(sevenDaysAgo)}
 					/>
 					{props.datePicker}
@@ -137,6 +165,8 @@ function BookingCalendar(props: BookingCalendarProps) {
 						onTimeslotDeselect={props.onTimeslotDeselect}
 						selectedTimeslots={props.selectedTimeslots}
 						isTimeSlotAvailable={props.isTimeSlotAvailable}
+						isDisabled={isDisabled}
+						errorMessage={errorMessage}
 					/>
 				))}
 			</div>

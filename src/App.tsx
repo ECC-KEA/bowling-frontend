@@ -4,6 +4,7 @@ import BowlingBooking from "./containers/BowlingBooking.tsx";
 import NavBar from "./components/NavBar.tsx";
 import {Toaster} from "react-hot-toast";
 import AirHockeyBooking from "./containers/AirHockeyBooking.tsx";
+import DinnerBooking from "./containers/DinnerBooking.tsx";
 
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/bowling" element={<BowlingBooking />} />
                 <Route path="/airhockey" element={<AirHockeyBooking />} />
+                <Route path="/dinner" element={<DinnerBooking />} />
+                
                 {/*TODO: add routes to dinnerbooking, login etc.*/}
             </Routes>
             <Toaster position={"bottom-left"}/>

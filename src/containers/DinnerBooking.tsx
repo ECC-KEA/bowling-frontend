@@ -2,7 +2,7 @@ import BookingCalendar from "../components/BookingCalendar.tsx";
 import BookingForm from "../components/BookingForm.tsx";
 import type {TimeSlot} from "../types/generic.types.ts";
 import type {DinnerBooking} from "../types/dinner.types.ts";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
 import BookingDatePicker from "../components/BookingDatePicker.tsx";
 import useDinnerBookings from "../hooks/useDinnerBookings.ts";

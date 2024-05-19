@@ -1,7 +1,6 @@
 import {Booking} from "../types/generic.types.ts";
 import {formatDate} from "../utils/dateUtils.ts";
 import {formatPrice} from "../utils/priceUtils.ts";
-import ShowIf from "./ShowIf.tsx";
 
 interface BookingConfirmationModalProps<T extends Booking> {
 	onDismiss: () => void;

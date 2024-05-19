@@ -3,6 +3,7 @@ import Home from "./containers/Home.tsx";
 import BowlingBooking from "./containers/BowlingBooking.tsx";
 import NavBar from "./components/NavBar.tsx";
 import {Toaster} from "react-hot-toast";
+import AirHockeyBooking from "./containers/AirHockeyBooking.tsx";
 
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/bowling" element={<BowlingBooking />} />
-                {/*TODO: add routes to airhockey, dinnerbooking, login etc.*/}
+                <Route path="/airhockey" element={<AirHockeyBooking />} />
+                {/*TODO: add routes to dinnerbooking, login etc.*/}
             </Routes>
             <Toaster position={"bottom-left"}/>
         </BrowserRouter>

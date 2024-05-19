@@ -1,31 +1,23 @@
 import BookingCalendar from "../components/BookingCalendar.tsx";
 import BookingForm from "../components/BookingForm.tsx";
 import type {TimeSlot} from "../types/generic.types.ts";
-import type {BowlingBooking} from "../types/bowling.types.ts";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
 import BookingDatePicker from "../components/BookingDatePicker.tsx";
-import useBowlingBookings from "../hooks/useBowlingBookings.ts";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
-import {
-	isChildFriendlyAvailable,
-	isNotChildFriendlyAvailable
-} from "../helpers/bowlinghelpers.ts";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
+import type {AirHockeyBooking} from "../types/airhockey.types.ts";
+import useAirHockeyBookings from "../hooks/useAirHockeyBookings.ts";
 import {filterOutTimeslots, getAdjacentSelectedTimeslots} from "../helpers/timeslothelpers.ts";
+import {isTableBooked} from "../helpers/airhockeyhelpers.ts";
 
-function BowlingBooking() {
+function AirHockeyBooking() {
 	const [selectedTimeslots, setSelectedTimeslots] = useState<TimeSlot[]>([]);
-	const [childFriendly, setChildFriendly] = useState<boolean>(false);
 	const [email, setEmail] = useState<string>("");
 	const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-	const [newBookings, setNewBookings] = useState<BowlingBooking[]>([]);
-	const {bookings, lanes, createMany, loading, fromDate, setFromDate} = useBowlingBookings();
-
-	useEffect(() => {
-		setSelectedTimeslots(selectedTimeslots.filter(isTimeSlotAvailable));
-	}, [childFriendly]);
+	const [newBookings, setNewBookings] = useState<AirHockeyBooking[]>([]);
+	const {bookings, tables, createMany, loading, fromDate, setFromDate} = useAirHockeyBookings();
 
 	const onSubmit = async () => {
 		const newB = await createMany(selectedTimeslots
@@ -33,11 +25,9 @@ function BowlingBooking() {
 				customerEmail: email,
 				start: timeslot.start,
 				end: timeslot.end,
-				childFriendly: childFriendly
 			})));
 		setSelectedTimeslots([]);
 		setEmail("");
-		setChildFriendly(false);
 
 		if(newB !== undefined){
 			setShowConfirmation(true);
@@ -74,15 +64,12 @@ function BowlingBooking() {
 	}
 
 	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{
-		if(childFriendly){
-			return isChildFriendlyAvailable(lanes, bookings, timeSlot);
-		}
-		return isNotChildFriendlyAvailable(lanes, bookings, timeSlot);
+		return tables.some((table) => !isTableBooked(bookings, table.id, timeSlot));
 	}
 
-	const getBookingPrice = (booking: BowlingBooking): number => {
+	const getBookingPrice = (booking: AirHockeyBooking): number => {
 		const duration = booking.end.getHours() - booking.start.getHours();
-		const price = booking.lane.pricePerHour ?? 0;
+		const price = booking.table.pricePerHour ?? 0;
 		return price * duration;
 	}
 
@@ -102,39 +89,10 @@ function BowlingBooking() {
 						className="border p-2 text-black w-full"
 						onChange={(e) => setEmail(e.target.value)}
 					/>
-					<span className="font-semibold">
-						Need child friendly lane?
-					</span>
-					<div className="flex gap-8">
-						<label className="flex items-center gap-2">
-							<input
-								checked={childFriendly}
-								required={true}
-								unselectable={"off"}
-								type="radio"
-								name="child-friendly"
-								className="border ml- p-2 w-4 h-4 accent-blue-950"
-								onChange={() => setChildFriendly(true)}
-							/>
-							Yes
-						</label>
-						<label className="flex items-center gap-2">
-							<input
-								checked={!childFriendly}
-								required={true}
-								unselectable={"off"}
-								type="radio"
-								name="child-friendly"
-								className="border ml- p-2 w-4 h-4 accent-blue-950"
-								onChange={() => setChildFriendly(false)}
-							/>
-							No
-						</label>
-					</div>
 				</BookingForm>
 				<ShowIf condition={!loading}>
 					<BookingCalendar
-						title={"Bowling"}
+						title={"Air Hockey"}
 						selectedTimeslots={selectedTimeslots}
 						onTimeslotSelect={onTimeslotSelect}
 						onTimeslotDeselect={onTimeslotDeselect}
@@ -161,4 +119,4 @@ function BowlingBooking() {
 	);
 }
 
-export default BowlingBooking;
+export default AirHockeyBooking;

@@ -1,8 +1,8 @@
 import type {TimeSlot} from "../types/generic.types.ts";
 import {ReactNode, useEffect, useState} from "react";
 import {formatDate} from "../utils/dateUtils.ts";
-import {isTimeSlotInList} from "../helpers/bookinghelpers.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import {isTimeSlotInList} from "../helpers/timeslothelpers.ts";
 
 
 interface TimeSlotBoxProps {

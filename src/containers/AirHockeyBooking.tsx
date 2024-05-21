@@ -9,7 +9,7 @@ import LoadingSpinner from "../components/LoadingSpinner.tsx";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
 import type {AirHockeyBooking} from "../types/airhockey.types.ts";
 import useAirHockeyBookings from "../hooks/useAirHockeyBookings.ts";
-import {filterOutTimeslots, getAdjacentSelectedTimeslots} from "../helpers/timeslothelpers.ts";
+import {filterOutTimeslots, getAdjacentSelectedTimeslots, isSameTimeSlot} from "../helpers/timeslothelpers.ts";
 import {isTableBooked} from "../helpers/airhockeyhelpers.ts";
 
 function AirHockeyBooking() {
@@ -60,7 +60,7 @@ function AirHockeyBooking() {
 		}
 	}
 	const onTimeslotDeselect = (timeslot: TimeSlot) => {
-		setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()));
+		setSelectedTimeslots(selectedTimeslots.filter((ts) => !isSameTimeSlot(ts, timeslot)));
 	}
 
 	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{

@@ -13,7 +13,7 @@ import {
 	isNotChildFriendlyAvailable
 } from "../helpers/bowlinghelpers.ts";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
-import {filterOutTimeslots, getAdjacentSelectedTimeslots} from "../helpers/timeslothelpers.ts";
+import {filterOutTimeslots, getAdjacentSelectedTimeslots, isSameTimeSlot} from "../helpers/timeslothelpers.ts";
 
 function BowlingBooking() {
 	const [selectedTimeslots, setSelectedTimeslots] = useState<TimeSlot[]>([]);
@@ -70,7 +70,7 @@ function BowlingBooking() {
 		}
 	}
 	const onTimeslotDeselect = (timeslot: TimeSlot) => {
-		setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()));
+		setSelectedTimeslots(selectedTimeslots.filter((ts) => !isSameTimeSlot(ts, timeslot)));
 	}
 
 	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{

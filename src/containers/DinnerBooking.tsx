@@ -9,7 +9,7 @@ import useDinnerBookings from "../hooks/useDinnerBookings.ts";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
-import {filterOutTimeslots, getAdjacentSelectedTimeslots} from "../helpers/timeslothelpers.ts";
+import {filterOutTimeslots, getAdjacentSelectedTimeslots, isSameTimeSlot} from "../helpers/timeslothelpers.ts";
 import { isCapacityNotReached } from "../helpers/dinnerhelpers.ts";
 
 function DinnerBooking() {
@@ -61,7 +61,7 @@ function DinnerBooking() {
 		}
 	}
 	const onTimeslotDeselect = (timeslot: TimeSlot) => {
-		setSelectedTimeslots(selectedTimeslots.filter((ts) => ts.start.getTime() !== timeslot.start.getTime()));
+		setSelectedTimeslots(selectedTimeslots.filter((ts) => !isSameTimeSlot(ts, timeslot)));
 	}
 
 	function isTimeSlotAvailable(timeSlot: TimeSlot): boolean{

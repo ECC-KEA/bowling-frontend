@@ -1,6 +1,6 @@
 import type {TimeSlot} from "../types/generic.types.ts";
 import {ReactNode, useEffect, useState} from "react";
-import {formatDate} from "../utils/dateUtils.ts";
+import {formatDate, getDateArray} from "../utils/dateUtils.ts";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {isTimeSlotInList} from "../helpers/timeslothelpers.ts";
 import toast from "react-hot-toast";
@@ -128,15 +128,12 @@ interface BookingCalendarProps {
 function BookingCalendar(props: BookingCalendarProps) {
 	const isDisabled = props.isDisabled ?? false;
 	const errorMessage = props.errorMessage ?? "Something went wrong";
-	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
 	const sevenDaysFromNow = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 7));
 	const sevenDaysAgo = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() - 7));
+	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
 
-	const dates = [];
+	const dates = getDateArray(props.fromDate, endDate);
 
-	for (let i = new Date(props.fromDate); i <= endDate; i.setDate(i.getDate() + 1)) {
-		dates.push(new Date(i));
-	}
 
 	return (<div className={`flex flex-col h-[calc(100vh-200px)] w-full gap-2 ${isDisabled ? `opacity-50`: `` }`}>
 			<div className="flex items-center justify-between">

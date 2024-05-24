@@ -29,4 +29,27 @@ function formatDateForJavaLocalDateTime(date?: Date): string | undefined {
 	return year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "." + milliseconds.toString().padStart(6, '0');
 }
 
-export {formatDate, isSameDay, formatDateForJavaLocalDateTime, isBetween};
+function getDateArray(fromDate: Date, toDate: Date): Date[] {
+	const dates = [];
+
+	for (let i = new Date(fromDate); i <= toDate; i.setDate(i.getDate() + 1)) {
+		dates.push(new Date(i));
+	}
+	return dates;
+}
+
+function formatHour(date: Date): string {
+	return date.toLocaleString('en-UK', {
+		hour: '2-digit',
+		minute: '2-digit'
+	});
+}
+
+function formatDateDayAndMonth(date: Date): string {
+	return date.toLocaleString('en-UK', {
+		day: '2-digit',
+		month: '2-digit'
+	});
+}
+
+export {formatDate, isSameDay, formatDateForJavaLocalDateTime, isBetween, getDateArray, formatHour, formatDateDayAndMonth};

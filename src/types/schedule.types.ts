@@ -6,4 +6,11 @@ interface Shift{
 	employeeId: number;
 }
 
-export type {Shift};
+interface ShiftDTO{
+	id: number;
+	start: string;
+	end: string;
+	employeeId: number;
+}
+
+export type {Shift, ShiftDTO};

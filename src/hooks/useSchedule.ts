@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
-import {Shift} from "../types/schedule.types.ts";
-import {Employee} from "../types/employee.types.ts";
+import type {Shift, ShiftDTO} from "../types/schedule.types.ts";
+import type {Employee} from "../types/employee.types.ts";
 import DataService from "../utils/DataService.ts";
 import toast from "react-hot-toast";
+import {formatDateForJavaLocalDateTime} from "../utils/dateUtils.ts";
 
 function useSchedule() {
 	const [shifts, setShifts] = useState<Shift[]>([]);
@@ -11,9 +12,25 @@ function useSchedule() {
 	const [fromDate, setFromDate] = useState<Date>(new Date());
 	const [employeeShiftMap, setEmployeeShiftMap] = useState<Map<number, Shift[]>>(new Map());
 
-	const dataService = new DataService<Shift>("/schedule");
+	const dataService = new DataService<ShiftDTO>("/schedule");
 	const employeeService = new DataService<Employee>("/employees");
 
+	const mapDTOToShift = (dto: ShiftDTO): Shift => {
+		return {
+			id: dto.id,
+			start: new Date(dto.start),
+			end: new Date(dto.end),
+			employeeId: dto.employeeId
+		}
+	}
+
+	const mapShiftToDTO = (shift: Partial<Shift>): Partial<ShiftDTO> => {
+		return {
+			start: formatDateForJavaLocalDateTime(shift.start),
+			end: formatDateForJavaLocalDateTime(shift.end),
+			employeeId: shift.employeeId
+		}
+	}
 
 	const fetchEmployees = async () => {
 		try {
@@ -40,7 +57,7 @@ function useSchedule() {
 		];
 		try {
 			const shifts = await dataService.getAll(queryParams);
-			setShifts(shifts);
+			setShifts(shifts.map(mapDTOToShift));
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				toast.error("Failed to fetch shifts: " + error.message);
@@ -69,8 +86,8 @@ function useSchedule() {
 
 	const createShift = async (shift: Partial<Shift>) => {
 		try {
-			const newShift = await dataService.create(shift);
-			setShifts([...shifts, newShift]);
+			const newShift = await dataService.create(mapShiftToDTO(shift));
+			setShifts([...shifts, mapDTOToShift(newShift)]);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				toast.error("Failed to create shift: " + error.message);
@@ -80,8 +97,8 @@ function useSchedule() {
 
 	const updateShift = async (shift: Shift) => {
 		try {
-			const updatedShift = await dataService.patch(shift);
-			const updatedShifts = shifts.map(s => s.id === updatedShift.id ? updatedShift : s);
+			const updatedShift = await dataService.patch(mapShiftToDTO(shift));
+			const updatedShifts = shifts.map(s => s.id === updatedShift.id ? mapDTOToShift(updatedShift) : s);
 			setShifts(updatedShifts);
 		} catch (error: unknown) {
 			if (error instanceof Error) {

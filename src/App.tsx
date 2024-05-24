@@ -1,14 +1,17 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Home from "./containers/Home.tsx";
-import BowlingBooking from "./containers/BowlingBooking.tsx";
-import NavBar from "./components/NavBar.tsx";
+import Home from "./containers/Home";
+import BowlingBooking from "./containers/BowlingBooking";
+import NavBar from "./components/NavBar";
 import {Toaster} from "react-hot-toast";
-import AirHockeyBooking from "./containers/AirHockeyBooking.tsx";
-import DinnerBooking from "./containers/DinnerBooking.tsx";
-import InventoryItem from "./containers/InventoryItem.tsx";
-
+import AirHockeyBooking from "./containers/AirHockeyBooking";
+import DinnerBooking from "./containers/DinnerBooking";
+import InventoryItem from "./containers/InventoryItem";
+import Login from "./containers/Login";
+import {useAuth} from "@clerk/clerk-react";
 
 function App() {
+    const {isSignedIn} = useAuth();
+
     return (
         <BrowserRouter>
             <NavBar />
@@ -17,9 +20,13 @@ function App() {
                 <Route path="/bowling" element={<BowlingBooking />} />
                 <Route path="/airhockey" element={<AirHockeyBooking />} />
                 <Route path="/dinner" element={<DinnerBooking />} />
-                <Route path={"/inventory"} element={<InventoryItem />} />
-                
-                {/*TODO: add routes to dinnerbooking, login etc.*/}
+                <Route path="/login" element={<Login />} />
+                {isSignedIn && (
+                    <>
+                        <Route path="/inventory" element={<InventoryItem />} />
+                        {/* Add other protected routes here */}
+                    </>
+                )}
             </Routes>
             <Toaster
                 toastOptions={{

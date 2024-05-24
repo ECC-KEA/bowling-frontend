@@ -52,4 +52,12 @@ function formatDateDayAndMonth(date: Date): string {
 	});
 }
 
-export {formatDate, isSameDay, formatDateForJavaLocalDateTime, isBetween, getDateArray, formatHour, formatDateDayAndMonth};
+function formatDateWithoutYear(date: Date): string {
+	return date.toLocaleString('en-UK', {
+		month: '2-digit',
+		day: '2-digit',
+		weekday: 'narrow'
+	});
+}
+
+export {formatDate, isSameDay, formatDateForJavaLocalDateTime, isBetween, getDateArray, formatHour, formatDateDayAndMonth, formatDateWithoutYear};

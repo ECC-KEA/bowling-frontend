@@ -3,9 +3,16 @@ import type {Employee} from "../types/employee.types.ts";
 import type {Shift} from "../types/schedule.types.ts";
 import PageLayout from "../components/PageLayout.tsx";
 import ShowIf from "../components/ShowIf.tsx";
-import {formatDateDayAndMonth, formatHour, getDateArray} from "../utils/dateUtils.ts";
+import {
+	formatDate,
+	formatDateDayAndMonth,
+	formatDateWithoutYear,
+	formatHour,
+	getDateArray
+} from "../utils/dateUtils.ts";
 import {Dispatch, SetStateAction, useState} from "react";
-import {FaPlus} from "react-icons/fa";
+import {FaArrowLeft, FaArrowRight, FaPlus} from "react-icons/fa";
+import BookingDatePicker from "../components/BookingDatePicker.tsx";
 
 interface ShiftCellProps {
 	shift: Shift | undefined;
@@ -50,20 +57,17 @@ interface EmployeeRowProps {
 	deleteShift: (shiftID: number) => void;
 	setShowCreateModal: Dispatch<SetStateAction<boolean>>;
 	setShowEditModal: Dispatch<SetStateAction<boolean>>;
+	dates: Date[];
 }
 
 function EmployeeRow(props: EmployeeRowProps) {
-	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
-
-	const dates = getDateArray(props.fromDate, endDate);
-
 	return (
 		<div className="flex w-full">
-			<h2 className="bg-gray-medium text-center w-48 p-4 font-semibold">
+			<h2 className="bg-gray-medium text-center w-48 p-4 font-semibold border border-black">
 				{props.employee.firstName} {props.employee.lastName}
 			</h2>
 			<div className="flex w-full justify-evenly">
-				{dates.map(date => {
+				{props.dates.map(date => {
 						const shift = props.shifts.find(shift => shift.start.getDate() === date.getDate());
 						return <ShiftCell
 							key={date.getTime()}
@@ -92,10 +96,44 @@ function Schedule() {
 	const [showEditModal, setShowEditModal] = useState<boolean>(false);
 	const sevenDaysFromNow = new Date(new Date(fromDate).setDate(fromDate.getDate() + 7));
 	const sevenDaysAgo = new Date(new Date(fromDate).setDate(fromDate.getDate() - 7));
+	const endDate = new Date(new Date(fromDate).setDate(fromDate.getDate() + 6));
+
+	const dates = getDateArray(fromDate, endDate);
 
 	return (
 		<PageLayout>
-			<h1>Schedule</h1>
+			<div className="flex items-end mb-2 justify-between">
+				<div className="flex items-center gap-4">
+					<h1 className="text-4xl font-semibold">Schedule</h1>
+					<FaArrowLeft
+						className="text-2xl cursor-pointer"
+						onClick={() => setFromDate(sevenDaysAgo)}
+					/>
+					<BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>
+					<FaArrowRight
+						className="text-2xl cursor-pointer"
+						onClick={() => setFromDate(sevenDaysFromNow)}
+					/>
+				</div>
+				<div className="text-lg">
+					{formatDate(fromDate)} - {formatDate(endDate)}
+				</div>
+			</div>
+			<div className="flex w-full">
+				<h2 className="bg-gray-medium text-center w-48 p-4 border border-black text-2xl font-bold">
+					Employee
+				</h2>
+				<div className="flex w-full justify-evenly">
+					{dates.map(date => (
+						<h2
+							key={date.getTime()}
+							className="bg-gray-medium text-center w-full p-4 font-bold border border-black text-2xl"
+						>
+							{formatDateWithoutYear(date)}
+						</h2>
+					))}
+				</div>
+			</div>
 			<div>
 				<ShowIf condition={!loading}>
 					{employees.map(employee => (
@@ -109,6 +147,7 @@ function Schedule() {
 							fromDate={fromDate}
 							setShowCreateModal={setShowCreateModal}
 							setShowEditModal={setShowEditModal}
+							dates={dates}
 						/>
 					))}
 				</ShowIf>

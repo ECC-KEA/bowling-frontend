@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DataService from "../utils/DataService";
-import { InventoryItem } from "../types/inventoryItem.types";
+import {InventoryItem, NewInventoryItem} from "../types/inventoryItem.types";
 import toast from "react-hot-toast";
 
 const useInventoryItems = () => {
@@ -49,7 +49,19 @@ const useInventoryItems = () => {
         }
     };
 
-    return { inventoryItems, loading, updateStockQuantity, deleteInventoryItem };
+    const createInventoryItem = async (newItem: NewInventoryItem) => {
+        try {
+            const createdItem = await dataService.create(newItem);
+            setInventoryItems(prevItems => [...prevItems, createdItem]);
+            toast.success("Item created successfully");
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error("Failed to create item: " + error.message);
+            }
+        }
+    }
+
+    return { inventoryItems, loading, updateStockQuantity, deleteInventoryItem, createInventoryItem };
 };
 
 export default useInventoryItems;

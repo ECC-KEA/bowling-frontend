@@ -55,8 +55,8 @@ class DataService<DTO> {
 		return await response.json();
 	}
 
-	public async patch(entity: Partial<DTO>): Promise<DTO> {
-		const response = await fetch(this.endpoint + this.uri, {
+	public async patch(entity: Partial<DTO>, id: number): Promise<DTO> {
+		const response = await fetch(this.endpoint + this.uri + `/${id}`, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json"

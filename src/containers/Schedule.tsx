@@ -32,7 +32,7 @@ function CreateShiftModal({employee, date, setShowCreateModal, createShift}: Cre
 
     const onSubmit = () => {
         const startDateTime = combineDateWithTimeString(date, start);
-        const endDateTime = combineDateWithTimeString(date, start);
+        const endDateTime = combineDateWithTimeString(date, end);
 
         const newShift : Partial<Shift> = {
             employeeId: employee.id,
@@ -48,6 +48,16 @@ function CreateShiftModal({employee, date, setShowCreateModal, createShift}: Cre
         <Modal>
             <div>
                 <h2 className="text-2xl font-bold">Add Shift</h2>
+                <div>
+                    <div className="flex gap-2 mt-4">
+                        <div className="text-lg font-semibold w-full">Employee</div>
+                        <div className="text-lg w-full text-right">{employee.firstName} {employee.lastName}</div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                        <div className="text-lg font-semibold w-full">Date</div>
+                        <div className="text-lg w-full text-right">{formatDate(date)}</div>
+                    </div>
+                </div>
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     onSubmit();
@@ -75,13 +85,13 @@ function CreateShiftModal({employee, date, setShowCreateModal, createShift}: Cre
                         </label>
                         <button
                             type="submit"
-                            className="bg-rose text-gray font-semibold p-2 rounded-md hover:bg-rose-dark"
+                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md hover:bg-blue-600"
                         >
                             Add Shift
                         </button>
                         <button
                             type="button"
-                            className="border border-rose rounded-md p-1 font-semibold hover:bg-rose"
+                            className="w-full border border-gray rounded-md p-1 font-semibold hover:bg-gray-medium"
                             onClick={() => setShowCreateModal(false)}
                         >
                             Close
@@ -123,6 +133,16 @@ function EditShiftModal({employee, date, shift, setShowEditModal, deleteShift, u
         <Modal>
             <div>
                 <h2 className="text-2xl font-bold">Edit Shift</h2>
+                <div>
+                    <div className="flex gap-2 mt-4">
+                        <div className="text-lg font-semibold w-full">Employee</div>
+                        <div className="text-lg w-full text-right">{employee.firstName} {employee.lastName}</div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                        <div className="text-lg font-semibold w-full">Date</div>
+                        <div className="text-lg w-full text-right">{formatDate(date)}</div>
+                    </div>
+                </div>
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     onSubmit();
@@ -150,7 +170,7 @@ function EditShiftModal({employee, date, shift, setShowEditModal, deleteShift, u
                         </label>
                         <button
                             type="submit"
-                            className="bg-rose text-gray font-semibold p-2 rounded-md hover:bg-rose-dark"
+                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md hover:bg-blue-600"
                         >
                             Update Shift
                         </button>
@@ -201,7 +221,7 @@ function ShiftCell({shift, onClick}: ShiftCellProps) {
             {
                 !shift &&
                 <div
-                    className="flex h-full w-full justify-center items-center text-gray hover:text-gray-medium cursor-pointer"
+                    className="flex h-full w-full justify-center items-center text-gray hover:text-blue-600 cursor-pointer"
                     onClick={onClick}
                     title={"Add shift"}
                 >

@@ -14,7 +14,7 @@ class DataService<DTO> {
 	public async getAll(queryParams? : QueryParam[]): Promise<DTO[]> {
 		const response = await fetch(this.endpoint + this.uri + this.createQueryParamString(queryParams));
 		if(!response.ok){
-			throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
+			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		return await response.json();
 	}

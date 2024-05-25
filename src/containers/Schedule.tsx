@@ -110,7 +110,7 @@ function EditShiftModal({employee, date, shift, setShowEditModal, deleteShift, u
 
     const onSubmit = () => {
         const startDateTime = combineDateWithTimeString(date, start);
-        const endDateTime = combineDateWithTimeString(date, start);
+        const endDateTime = combineDateWithTimeString(date, end);
 
         shift.start = startDateTime;
         shift.end = endDateTime;
@@ -152,7 +152,7 @@ function EditShiftModal({employee, date, shift, setShowEditModal, deleteShift, u
                             type="submit"
                             className="bg-rose text-gray font-semibold p-2 rounded-md hover:bg-rose-dark"
                         >
-                            Add Shift
+                            Update Shift
                         </button>
                         <div className="flex gap-2">
                             <button

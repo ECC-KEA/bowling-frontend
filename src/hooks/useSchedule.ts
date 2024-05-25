@@ -97,7 +97,7 @@ function useSchedule() {
 
 	const updateShift = async (shift: Shift) => {
 		try {
-			const updatedShift = await dataService.patch(mapShiftToDTO(shift));
+			const updatedShift = await dataService.patch(mapShiftToDTO(shift), shift.id);
 			const updatedShifts = shifts.map(s => s.id === updatedShift.id ? mapDTOToShift(updatedShift) : s);
 			setShifts(updatedShifts);
 		} catch (error: unknown) {

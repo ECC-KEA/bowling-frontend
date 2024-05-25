@@ -3,7 +3,6 @@ import BookingForm from "../components/BookingForm.tsx";
 import type {TimeSlot} from "../types/generic.types.ts";
 import {useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
-import BookingDatePicker from "../components/BookingDatePicker.tsx";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
 import BookingConfirmationModal from "../components/BookingConfirmationModal.tsx";
@@ -96,7 +95,6 @@ function AirHockeyBooking() {
 						selectedTimeslots={selectedTimeslots}
 						onTimeslotSelect={onTimeslotSelect}
 						onTimeslotDeselect={onTimeslotDeselect}
-						datePicker={<BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>}
 						fromDate={fromDate}
 						setFromDate={setFromDate}
 						isTimeSlotAvailable={isTimeSlotAvailable}

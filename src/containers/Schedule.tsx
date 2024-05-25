@@ -12,7 +12,7 @@ import {
 } from "../utils/dateUtils.ts";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FaArrowLeft, FaArrowRight, FaPlus} from "react-icons/fa";
-import BookingDatePicker from "../components/BookingDatePicker.tsx";
+import DatePicker from "../components/DatePicker.tsx";
 import Modal from "../components/Modal.tsx";
 import toast from "react-hot-toast";
 import {combineDateWithTimeString} from "../helpers/schedulehelpers.ts";
@@ -294,8 +294,6 @@ function Schedule() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedShift, setSelectedShift] = useState<Shift|null>(null);
 
-    const sevenDaysFromNow = new Date(new Date(fromDate).setDate(fromDate.getDate() + 7));
-    const sevenDaysAgo = new Date(new Date(fromDate).setDate(fromDate.getDate() - 7));
     const endDate = new Date(new Date(fromDate).setDate(fromDate.getDate() + 6));
     const dates = getDateArray(fromDate, endDate);
 
@@ -312,15 +310,7 @@ function Schedule() {
             <div className="flex items-end mb-2 justify-between">
                 <div className="flex items-center gap-4">
                     <h1 className="text-4xl font-semibold">Schedule</h1>
-                    <FaArrowLeft
-                        className="text-2xl cursor-pointer"
-                        onClick={() => setFromDate(sevenDaysAgo)}
-                    />
-                    <BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>
-                    <FaArrowRight
-                        className="text-2xl cursor-pointer"
-                        onClick={() => setFromDate(sevenDaysFromNow)}
-                    />
+                    <DatePicker setFromDate={setFromDate} fromDate={fromDate}/>
                 </div>
                 <div className="text-lg">
                     {formatDate(fromDate)} - {formatDate(endDate)}

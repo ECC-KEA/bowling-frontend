@@ -4,7 +4,6 @@ import type {TimeSlot} from "../types/generic.types.ts";
 import type {DinnerBooking} from "../types/dinner.types.ts";
 import {useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
-import BookingDatePicker from "../components/BookingDatePicker.tsx";
 import useDinnerBookings from "../hooks/useDinnerBookings.ts";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
@@ -101,7 +100,6 @@ function DinnerBooking() {
 						selectedTimeslots={selectedTimeslots}
 						onTimeslotSelect={onTimeslotSelect}
 						onTimeslotDeselect={onTimeslotDeselect}
-						datePicker={<BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>}
 						fromDate={fromDate}
 						setFromDate={setFromDate}
 						isTimeSlotAvailable={isTimeSlotAvailable}

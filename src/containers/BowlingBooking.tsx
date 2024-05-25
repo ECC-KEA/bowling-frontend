@@ -4,7 +4,6 @@ import type {TimeSlot} from "../types/generic.types.ts";
 import type {BowlingBooking} from "../types/bowling.types.ts";
 import {useEffect, useState} from "react";
 import PageLayout from "../components/PageLayout.tsx";
-import BookingDatePicker from "../components/BookingDatePicker.tsx";
 import useBowlingBookings from "../hooks/useBowlingBookings.ts";
 import ShowIf from "../components/ShowIf.tsx";
 import LoadingSpinner from "../components/LoadingSpinner.tsx";
@@ -138,7 +137,6 @@ function BowlingBooking() {
 						selectedTimeslots={selectedTimeslots}
 						onTimeslotSelect={onTimeslotSelect}
 						onTimeslotDeselect={onTimeslotDeselect}
-						datePicker={<BookingDatePicker onDateChange={(date: Date | null) => setFromDate(date ?? new Date())}/>}
 						fromDate={fromDate}
 						setFromDate={setFromDate}
 						isTimeSlotAvailable={isTimeSlotAvailable}

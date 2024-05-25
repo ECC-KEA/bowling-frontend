@@ -1,9 +1,9 @@
 import type {TimeSlot} from "../types/generic.types.ts";
-import {ReactNode, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {formatDate, getDateArray} from "../utils/dateUtils.ts";
-import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {isTimeSlotInList} from "../helpers/timeslothelpers.ts";
 import toast from "react-hot-toast";
+import DatePicker from "./DatePicker.tsx";
 
 
 interface TimeSlotBoxProps {
@@ -117,7 +117,6 @@ interface BookingCalendarProps {
 	selectedTimeslots: TimeSlot[];
 	onTimeslotSelect: (timeslot: TimeSlot) => void;
 	onTimeslotDeselect: (timeslot: TimeSlot) => void;
-	datePicker: ReactNode;
 	fromDate: Date;
 	setFromDate: (date: Date) => void;
 	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
@@ -128,8 +127,6 @@ interface BookingCalendarProps {
 function BookingCalendar(props: BookingCalendarProps) {
 	const isDisabled = props.isDisabled ?? false;
 	const errorMessage = props.errorMessage ?? "Something went wrong";
-	const sevenDaysFromNow = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 7));
-	const sevenDaysAgo = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() - 7));
 	const endDate = new Date(new Date(props.fromDate).setDate(props.fromDate.getDate() + 6));
 
 	const dates = getDateArray(props.fromDate, endDate);
@@ -139,15 +136,7 @@ function BookingCalendar(props: BookingCalendarProps) {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
 					<h1 className="text-4xl font-semibold">{props.title}</h1>
-					<FaArrowLeft
-						className={`text-2xl ${isDisabled ? `` : `cursor-pointer`}`}
-						onClick={() => props.setFromDate(sevenDaysAgo)}
-					/>
-					{props.datePicker}
-					<FaArrowRight
-						className="text-2xl cursor-pointer"
-						onClick={() => props.setFromDate(sevenDaysFromNow)}
-					/>
+					<DatePicker setFromDate={props.setFromDate} fromDate={props.fromDate}/>
 				</div>
 				<div className="text-lg">
 					{formatDate(props.fromDate)} - {formatDate(endDate)}

@@ -17,7 +17,8 @@ export default {
             DEFAULT: "#aaf8b0"
           },
           red: {
-            DEFAULT: "#E06868"
+            DEFAULT: "#E06868",
+            dark: "#e05555"
           },
           rose: {
             DEFAULT: "#EEC7F4",

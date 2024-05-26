@@ -1,5 +1,5 @@
 import type {TimeSlot} from "../types/generic.types.ts";
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {formatDate, getDateArray} from "../utils/dateUtils.ts";
 import {isTimeSlotInList} from "../helpers/timeslothelpers.ts";
 import toast from "react-hot-toast";
@@ -118,7 +118,7 @@ interface BookingCalendarProps {
 	onTimeslotSelect: (timeslot: TimeSlot) => void;
 	onTimeslotDeselect: (timeslot: TimeSlot) => void;
 	fromDate: Date;
-	setFromDate: (date: Date) => void;
+	setFromDate: Dispatch<SetStateAction<Date>>;
 	isTimeSlotAvailable: (timeSlot: TimeSlot) => boolean;
 	isDisabled?: boolean;
 	errorMessage?: string;

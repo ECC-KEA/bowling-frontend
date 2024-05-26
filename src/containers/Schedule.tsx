@@ -11,11 +11,11 @@ import {
     getDateArray
 } from "../utils/dateUtils.ts";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {FaArrowLeft, FaArrowRight, FaPlus} from "react-icons/fa";
+import {FaPlus} from "react-icons/fa";
 import DatePicker from "../components/DatePicker.tsx";
 import Modal from "../components/Modal.tsx";
 import toast from "react-hot-toast";
-import {combineDateWithTimeString} from "../helpers/schedulehelpers.ts";
+import {combineDateWithTimeString, getEmpTypeString} from "../helpers/schedulehelpers.ts";
 
 interface CreateModalProps {
     employee: Employee | null;
@@ -85,13 +85,13 @@ function CreateShiftModal({employee, date, setShowCreateModal, createShift}: Cre
                         </label>
                         <button
                             type="submit"
-                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md hover:bg-blue-600"
+                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md transition-colors hover:bg-blue-600"
                         >
                             Add Shift
                         </button>
                         <button
                             type="button"
-                            className="w-full border border-gray rounded-md p-1 font-semibold hover:bg-gray-medium"
+                            className="w-full border border-gray rounded-md p-1 font-semibold transition-colors hover:bg-gray-medium"
                             onClick={() => setShowCreateModal(false)}
                         >
                             Close
@@ -170,21 +170,21 @@ function EditShiftModal({employee, date, shift, setShowEditModal, deleteShift, u
                         </label>
                         <button
                             type="submit"
-                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md hover:bg-blue-600"
+                            className="bg-blue-500 text-gray-light font-semibold p-2 rounded-md transition-colors hover:bg-blue-600"
                         >
                             Update Shift
                         </button>
                         <div className="flex gap-2">
                             <button
                                 type="button"
-                                className="w-full bg-red hover:bg-red-dark text-gray-light font-semibold p-2 rounded-md"
+                                className="w-full bg-red transition-colors hover:bg-red-dark text-gray-light font-semibold p-2 rounded-md"
                                 onClick={() => {deleteShift(shift.id).then(() => toast.success("Shift deleted successfully")); setShowEditModal(false);}}
                             >
                                 Delete Shift
                             </button>
                             <button
                                 type="button"
-                                className="w-full border border-gray rounded-md p-1 font-semibold hover:bg-gray-medium"
+                                className="w-full border border-gray rounded-md p-1 font-semibold transition-colors hover:bg-gray-medium"
                                 onClick={() => setShowEditModal(false)}
                             >
                                 Close
@@ -205,10 +205,10 @@ interface ShiftCellProps {
 
 function ShiftCell({shift, onClick}: ShiftCellProps) {
     return (
-        <div className="w-full border border-black">
+        <div className="w-full border border-black flex justify-center items-center p-1">
             {!!shift &&
                 <div
-                    className="flex p-2 justify-center items-center bg-rose rounded-lg font-semibold text-lg hover:bg-rose-dark cursor-pointer m-1 relative"
+                    className="flex p-2 w-full h-full justify-center items-center bg-rose rounded font-semibold text-lg transition-colors hover:bg-rose-dark cursor-pointer m-1 relative"
                     onClick={onClick}
                     title={"Edit shift"}
                 >
@@ -221,7 +221,7 @@ function ShiftCell({shift, onClick}: ShiftCellProps) {
             {
                 !shift &&
                 <div
-                    className="flex h-full w-full justify-center items-center text-gray hover:text-blue-600 cursor-pointer"
+                    className="flex h-full w-full justify-center items-center text-gray transition-colors hover:text-blue-600 cursor-pointer"
                     onClick={onClick}
                     title={"Add shift"}
                 >
@@ -250,8 +250,9 @@ interface EmployeeRowProps {
 function EmployeeRow(props: EmployeeRowProps) {
     return (
         <div className="flex w-full">
-            <h2 className="bg-gray-medium text-center w-48 p-4 font-semibold border border-black">
+            <h2 className="bg-gray-medium text-center w-48 p-5 font-semibold border border-black flex flex-col relative">
                 {props.employee.firstName} {props.employee.lastName}
+                <span className="font-thin text-sm absolute top-0 left-1">{getEmpTypeString(props.employee.empType)}</span>
             </h2>
             <div className="flex w-full justify-evenly">
                 {props.dates.map(date => {

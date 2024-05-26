@@ -1,3 +1,4 @@
+import {EmpType} from "../types/employee.types.ts";
 
 function combineDateWithTimeString(date: Date, timeString: string){
     const timeSplit = timeString.split(":").map(t => Number(t));
@@ -10,4 +11,18 @@ function combineDateWithTimeString(date: Date, timeString: string){
     return dateTime;
 }
 
-export {combineDateWithTimeString}
+function getEmpTypeString(type: EmpType){
+    switch(type){
+        case EmpType.OPERATOR:
+            return "Operator";
+        case EmpType.MANAGER:
+            return "Manager";
+        case EmpType.CLEANING:
+            return "Cleaning";
+        case EmpType.REGULAR:
+        default:
+            return "";
+    }
+}
+
+export {combineDateWithTimeString, getEmpTypeString}

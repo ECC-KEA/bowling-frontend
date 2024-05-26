@@ -11,23 +11,24 @@ function DatePicker({setFromDate, fromDate}: DatePickerProps) {
 	const sevenDaysAgo = new Date(new Date(fromDate).setDate(fromDate.getDate() - 7));
 
 	return (
-		<>
+		<div className="flex justify-center items-center border rounded h-10">
 			<FaArrowLeft
-				className="text-2xl cursor-pointer"
+				className="text-4xl cursor-pointer px-2 transition-colors hover:bg-gray-light h-full"
 				onClick={() => setFromDate(sevenDaysAgo)}
+				title={"Previous 7 days"}
 			/>
-			<div className="flex items-center gap-2">
-				<input
-					type="date"
-					onChange={(e) => setFromDate(e.target.valueAsDate ?? new Date())}
-					className="border border-black rounded py-1 px-4"
-				/>
-			</div>
+			<input
+				type="date"
+				onChange={(e) => setFromDate(e.target.valueAsDate ?? new Date())}
+				className="h-full px-4 cursor-pointer hover:bg-gray-light transition-colors"
+				title={"Select start date"}
+			/>
 			<FaArrowRight
-				className="text-2xl cursor-pointer"
+				className="text-4xl cursor-pointer px-2 transition-colors hover:bg-gray-light h-full"
 				onClick={() => setFromDate(sevenDaysFromNow)}
+				title={"Next 7 days"}
 			/>
-		</>
+		</div>
 	);
 }
 

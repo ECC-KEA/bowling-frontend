@@ -3,7 +3,7 @@ interface Employee {
 	id: number;
 	firstName: string;
 	lastName: string;
-	empType: string;
+	empType: EmpType;
 }
 
 enum EmpType {

@@ -4,6 +4,7 @@ import type {Employee} from "../types/employee.types.ts";
 import DataService from "../utils/DataService.ts";
 import toast from "react-hot-toast";
 import {formatDateForJavaLocalDateTime} from "../utils/dateUtils.ts";
+import {EmpType} from "../types/employee.types.ts";
 
 function useSchedule() {
 	const [shifts, setShifts] = useState<Shift[]>([]);
@@ -35,6 +36,19 @@ function useSchedule() {
 	const fetchEmployees = async () => {
 		try {
 			const employees = await employeeService.getAll();
+			employees.sort((a, b) => {
+				if (a.empType === EmpType.MANAGER && b.empType !== EmpType.MANAGER) {
+					return -1;
+				} else if (b.empType === EmpType.MANAGER && a.empType !== EmpType.MANAGER) {
+					return 1;
+				} else if (a.empType === EmpType.OPERATOR && b.empType !== EmpType.OPERATOR) {
+					return -1;
+				} else if (b.empType === EmpType.OPERATOR && a.empType !== EmpType.OPERATOR) {
+					return 1;
+				} else {
+					return a.firstName.localeCompare(b.firstName);
+				}
+			});
 			setEmployees(employees);
 		} catch (error: unknown) {
 			if (error instanceof Error) {

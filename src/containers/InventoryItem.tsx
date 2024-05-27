@@ -28,7 +28,7 @@ const InventoryItem = () => {
 
     const handleSaveClick = () => {
         if (editItemId !== null) {
-            updateStockQuantity(editItemId, quantity);
+            void updateStockQuantity(editItemId, quantity);
             setEditItemId(null);
         }
     }
@@ -57,7 +57,11 @@ const InventoryItem = () => {
     };
 
     if (loading) {
-        return <LoadingSpinner />;
+        return (
+            <div className="flex justify-center items-center w-full h-96">
+                <LoadingSpinner />;
+            </div>
+        )
     }
 
     return (

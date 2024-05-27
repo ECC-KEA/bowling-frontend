@@ -2,7 +2,7 @@ import {GiBowlingStrike} from "react-icons/gi";
 import {Link, useNavigate} from "react-router-dom";
 import {ReactNode, useState} from "react";
 import {useUser, useClerk} from '@clerk/clerk-react';
-import {getOrganization} from "../helpers/authhelpers.ts";
+import {getOrganization} from "../helpers/authhelpers";
 
 function NavButton({to, children, onClick, selected}: {
     to: string,

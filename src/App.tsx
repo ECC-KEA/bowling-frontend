@@ -7,28 +7,43 @@ import AirHockeyBooking from "./containers/AirHockeyBooking";
 import DinnerBooking from "./containers/DinnerBooking";
 import InventoryItem from "./containers/InventoryItem";
 import Login from "./containers/Login";
-import {useAuth} from "@clerk/clerk-react";
+import {useAuth, useUser} from "@clerk/clerk-react";
 import Schedule from "./containers/Schedule.tsx";
+import {getOrganization} from "./helpers/authhelpers.ts";
 
 
 function App() {
     const {isSignedIn} = useAuth();
+    const {user} = useUser();
+    const organization = getOrganization(user);
 
     return (
         <BrowserRouter>
             <NavBar />
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/bowling" element={<BowlingBooking />} />
-                <Route path="/airhockey" element={<AirHockeyBooking />} />
-                <Route path="/dinner" element={<DinnerBooking />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/schedule" element={<Schedule />} />
-                {isSignedIn && (
+                {!isSignedIn && (
                     <>
+                        <Route path="/" element={<Home />} />
+                        <Route path="*" element={<InventoryItem />} />
+                        <Route path="/bowling" element={<BowlingBooking />} />
+                        <Route path="/airhockey" element={<AirHockeyBooking />} />
+                        <Route path="/dinner" element={<DinnerBooking />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/schedule" element={<Schedule />} />
+                    </>
+                )}
+                {isSignedIn && organization === 'operations' && (
+                        <>
+                            <Route path="/" element={<InventoryItem />} />
+                            <Route path="*" element={<InventoryItem />} />
+                        </>
+                )}
+                {isSignedIn && organization === 'management' && (
+                    <>
+                        <Route path="/" element={<InventoryItem />} />
+                        <Route path="*" element={<InventoryItem />} />
                         <Route path="/inventory" element={<InventoryItem />} />
                         <Route path="/schedule" element={<Schedule />} />
-                        {/* Add other protected routes here */}
                     </>
                 )}
             </Routes>
